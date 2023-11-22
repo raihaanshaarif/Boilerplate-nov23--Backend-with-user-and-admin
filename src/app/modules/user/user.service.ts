@@ -1,69 +1,101 @@
-import mongoose from 'mongoose';
+import { SortOrder } from 'mongoose';
 import config from '../../../config';
-import ApiError from '../../../errors/ApiError';
-import { IAdmin } from '../admin/admin.interface';
-import { IUser } from './user.interface';
-import { generateAdminId } from './user.utils';
-import httpStatus from 'http-status';
+import { paginationHelpers } from '../../../helpers/paginationHelper';
+import { IGenericResponse } from '../../interfaces/common';
+import { IPaginationOptions } from '../../interfaces/pagination';
+import { userSearchableFields } from './user.constant';
+import { IUser, IUserFilters } from './user.interface';
+
 import { User } from './user.model';
-import { Admin } from '../admin/admin.model';
 
-const createAdmin = async (
-  admin: IAdmin,
-  user: IUser,
-): Promise<IUser | null> => {
-  if (!user.password) {
-    user.password = config.default_admin_pass as string;
+const createUser = async (payload: IUser): Promise<IUser | null> => {
+  if (!payload.password) {
+    payload.password = config.default_user_pass as string;
   }
 
-  //set role
-  user.role = 'admin';
-
-  let newUserAllData = null;
-  const session = await mongoose.startSession();
-
-  try {
-    session.startTransaction();
-    const id = await generateAdminId();
-
-    user.id = id;
-    admin.id = id;
-
-    const newAdmin = await Admin.create([admin], { session });
-    if (!newAdmin.length) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create Admin');
-    }
-    // set student _id into user.student
-    // user.faculty = newAdmin[0]._id;
-
-    const newUser = await User.create([user], { session });
-
-    if (!newUser.length) {
-      throw new ApiError(httpStatus.BAD_REQUEST, 'Failed to create user');
-    }
-
-    newUserAllData = newUser[0];
-
-    await session.commitTransaction();
-    await session.endSession();
-  } catch (error) {
-    await session.abortTransaction();
-    await session.endSession();
-    throw error;
+  if (!payload.income) {
+    payload.income = 0;
   }
-  if (newUserAllData) {
-    newUserAllData = await User.findOne({ id: newUserAllData.id }).populate({
-      path: 'admin',
-      populate: [
-        {
-          path: 'managementDepartment',
+  const result = await User.create(payload);
+  return result;
+};
+
+const getUser = async (
+  filters: IUserFilters,
+  paginationOptions: IPaginationOptions,
+): Promise<IGenericResponse<IUser[]>> => {
+  const { searchTerm, ...filtersData } = filters;
+  const { page, limit, skip, sortBy, sortOrder } =
+    paginationHelpers.calculatePagination(paginationOptions);
+
+  const andConditions = [];
+
+  if (searchTerm) {
+    andConditions.push({
+      $or: userSearchableFields.map(field => ({
+        [field]: {
+          $regex: searchTerm,
+          $options: 'i',
         },
-      ],
+      })),
     });
   }
-  return newUserAllData;
+
+  if (Object.keys(filtersData).length) {
+    andConditions.push({
+      $and: Object.entries(filtersData).map(([field, value]) => ({
+        [field]: value,
+      })),
+    });
+  }
+
+  const sortConditions: { [key: string]: SortOrder } = {};
+
+  if (sortBy && sortOrder) {
+    sortConditions[sortBy] = sortOrder;
+  }
+  const whereConditions =
+    andConditions.length > 0 ? { $and: andConditions } : {};
+
+  const result = await User.find(whereConditions)
+    .sort(sortConditions)
+    .skip(skip)
+    .limit(limit);
+
+  const total = await User.countDocuments(whereConditions);
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+    },
+    data: result,
+  };
+};
+const geSingleUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findById(id);
+  return result;
+};
+const updateUser = async (
+  id: string,
+  payload: Partial<IUser>,
+): Promise<IUser | null> => {
+  const result = await User.findByIdAndUpdate({ _id: id }, payload, {
+    new: true,
+  });
+  return result;
+};
+
+const deleteUser = async (id: string): Promise<IUser | null> => {
+  const result = await User.findByIdAndRemove(id);
+  return result;
 };
 
 export const usersService = {
-  createAdmin,
+  createUser,
+  getUser,
+  geSingleUser,
+  updateUser,
+  deleteUser,
 };

@@ -1,0 +1,20 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "G:\\@Phero 2023\\Restart\\digital-cow-hut\\digital-cow-hut\\logs\\winston\\errors\\.d7784fda9c94364b7c529e104f6a5fcf9bdbdf58-audit.json",
+    "files": [
+        {
+            "date": 1700655521258,
+            "name": "G:\\@Phero 2023\\Restart\\digital-cow-hut\\digital-cow-hut\\logs\\winston\\errors\\2023-22-11-18-error.log",
+            "hash": "853edac052e1a064d2f6b4f88b90aab78982c5c373faca20867016c26f717143"
+        },
+        {
+            "date": 1700658007737,
+            "name": "G:\\@Phero 2023\\Restart\\digital-cow-hut\\digital-cow-hut\\logs\\winston\\errors\\2023-22-11-19-error.log",
+            "hash": "3210ebf24719c7b9ba4b31ca5cea6785896765bbc52acf7b2426fb6a131aae67"
+        }
+    ],
+    "hashType": "sha256"
+}

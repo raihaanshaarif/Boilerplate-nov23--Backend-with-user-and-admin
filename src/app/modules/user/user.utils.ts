@@ -1,19 +1,18 @@
 import { User } from './user.model';
 
-export const findLastAdminId = async (): Promise<string | undefined> => {
-  const lastAdmin = await User.findOne({ role: 'admin' }, { id: 1, _id: 0 })
+export const findLastUserId = async () => {
+  const lastUser = await User.findOne({}, { id: 1, _id: 0 })
     .sort({
       createdAt: -1,
     })
     .lean();
 
-  return lastAdmin?.id ? lastAdmin.id.substring(2) : undefined;
+  return lastUser;
 };
 
-export const generateAdminId = async (): Promise<string> => {
-  const currentId =
-    (await findLastAdminId()) || (0).toString().padStart(5, '0');
-  let incrementedId = (parseInt(currentId) + 1).toString().padStart(5, '0');
-  incrementedId = `A-${incrementedId}`;
-  return incrementedId;
-};
+// export const generateAdminId = async (): Promise<string> => {
+//   // const currentId = (await findLastUserId()) || (0).toString().padStart(5, '0');
+//   // // let incrementedId = (parseInt(currentId) + 1).toString().padStart(5, '0');
+//   // incrementedId = `A-${incrementedId}`;
+//   // return incrementedId;
+// };

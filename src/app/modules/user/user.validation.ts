@@ -1,62 +1,56 @@
 import { z } from 'zod';
+import { role } from './user.constant';
 
 const createAdminZodSchema = z.object({
   body: z.object({
     password: z.string().optional(),
-
-    admin: z.object({
-      name: z.object({
-        firstName: z.string({
-          required_error: 'First name is required',
-        }),
-        lastName: z.string({
-          required_error: 'Last name is required',
-        }),
-        middleName: z.string().optional(),
+    name: z.object({
+      firstName: z.string({
+        required_error: 'First name is required',
       }),
-
-      dateOfBirth: z.string({
-        required_error: 'Date of birth is required',
+      lastName: z.string({
+        required_error: 'Last name is required',
       }),
-      email: z
-        .string({
-          required_error: 'Email is required',
-        })
-        .email(),
-      contactNo: z.string({
-        required_error: 'Contact number is required',
-      }),
-      emergencyContactNo: z.string({
-        required_error: 'Emergency contact number is required',
-      }),
-      gender: z.string({
-        required_error: 'Gender is required',
-      }),
-
-      presentAddress: z.string({
-        required_error: 'Present address is required',
-      }),
-      permanentAddress: z.string({
-        required_error: 'Permanent address is required',
-      }),
-      bloodGroup: z
-        .string({
-          required_error: 'Blood group is required',
-        })
-        .optional(),
-
-      designation: z.string({
-        required_error: 'Designation is required',
-      }),
-      profileImage: z
-        .string({
-          required_error: 'Profile Image is required',
-        })
-        .optional(),
     }),
+    phoneNumber: z.string({
+      required_error: 'Phone No number is required',
+    }),
+    role: z.enum([...role] as [string, ...string[]]).optional(),
+
+    address: z.string({
+      required_error: 'Address is required',
+    }),
+    budget: z.number({
+      required_error: 'Budget is required',
+    }),
+    income: z
+      .number({
+        required_error: 'Income is required',
+      })
+      .optional(),
   }),
+});
+
+const updateAdminZodSchema = z.object({
+  body: z
+    .object({
+      password: z.string().optional(),
+      name: z
+        .object({
+          firstName: z.string().optional(),
+          lastName: z.string().optional(),
+        })
+        .optional(),
+      phoneNumber: z.string().optional(),
+      role: z.enum([...role] as [string, ...string[]]).optional(),
+      address: z.string().optional(),
+      budget: z.number().optional(),
+      income: z.number().optional(),
+    })
+    .optional(),
 });
 
 export const UserValidation = {
   createAdminZodSchema,
+  updateAdminZodSchema,
 };

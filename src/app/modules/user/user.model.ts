@@ -3,10 +3,25 @@ import { IUser, UserModel } from './user.interface';
 
 const userSchema = new Schema<IUser>(
   {
-    id: { type: String, required: true, unique: true },
-    role: { type: String, required: true },
+    role: { type: String, enum: ['buyer', 'seller'], required: true },
     password: { type: String, required: true },
-    admin: { type: Schema.Types.ObjectId, ref: 'Admin' },
+    phoneNumber: { type: String, required: true, unique: true },
+    name: {
+      type: {
+        firstName: {
+          type: String,
+          required: true,
+        },
+        lastName: {
+          type: String,
+          required: true,
+        },
+      },
+      required: true,
+    },
+    address: { type: String, required: true },
+    budget: { type: Number, default: 0, required: true },
+    income: { type: Number },
   },
   {
     timestamps: true,
