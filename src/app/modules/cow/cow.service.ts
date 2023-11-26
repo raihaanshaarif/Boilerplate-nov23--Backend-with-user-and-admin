@@ -1,30 +1,22 @@
 import { SortOrder } from 'mongoose';
-import config from '../../../config';
 import { paginationHelpers } from '../../../helpers/paginationHelper';
 import { IGenericResponse } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
-import { userSearchableFields } from './user.constant';
-import { IUser, IUserFilters } from './user.interface';
+import { cowSearchableFields } from './cow.conostant';
+import { ICow, ICowFilters } from './cow.interface';
+import { Cow } from './cow.model';
 
-import { User } from './user.model';
-
-const createUser = async (payload: IUser): Promise<IUser | null> => {
-  if (!payload.password) {
-    payload.password = config.default_user_pass as string;
-  }
-
-  if (!payload.income) {
-    payload.income = 0;
-  }
-  const result = await User.create(payload);
-  console.log(result);
+// Create a new cow
+const createCow = async (payload: ICow): Promise<ICow | null> => {
+  console.log(payload.label);
+  const result = await Cow.create(payload);
   return result;
 };
 
-const getUser = async (
-  filters: IUserFilters,
+const getCow = async (
+  filters: ICowFilters,
   paginationOptions: IPaginationOptions,
-): Promise<IGenericResponse<IUser[]>> => {
+): Promise<IGenericResponse<ICow[]>> => {
   const { searchTerm, ...filtersData } = filters;
   const { page, limit, skip, sortBy, sortOrder } =
     paginationHelpers.calculatePagination(paginationOptions);
@@ -33,7 +25,7 @@ const getUser = async (
 
   if (searchTerm) {
     andConditions.push({
-      $or: userSearchableFields.map(field => ({
+      $or: cowSearchableFields.map(field => ({
         [field]: {
           $regex: searchTerm,
           $options: 'i',
@@ -58,12 +50,12 @@ const getUser = async (
   const whereConditions =
     andConditions.length > 0 ? { $and: andConditions } : {};
 
-  const result = await User.find(whereConditions)
+  const result = await Cow.find(whereConditions)
     .sort(sortConditions)
     .skip(skip)
     .limit(limit);
 
-  const total = await User.countDocuments(whereConditions);
+  const total = await Cow.countDocuments(whereConditions);
 
   return {
     meta: {
@@ -74,29 +66,31 @@ const getUser = async (
     data: result,
   };
 };
-const geSingleUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findById(id);
+
+const geSingleCow = async (id: string): Promise<ICow | null> => {
+  const result = await Cow.findById(id);
   return result;
 };
-const updateUser = async (
+
+const updateCow = async (
   id: string,
-  payload: Partial<IUser>,
-): Promise<IUser | null> => {
-  const result = await User.findByIdAndUpdate({ _id: id }, payload, {
+  payload: Partial<ICow>,
+): Promise<ICow | null> => {
+  const result = await Cow.findByIdAndUpdate({ _id: id }, payload, {
     new: true,
   });
   return result;
 };
 
-const deleteUser = async (id: string): Promise<IUser | null> => {
-  const result = await User.findByIdAndRemove(id);
+const deleteCow = async (id: string): Promise<ICow | null> => {
+  const result = await Cow.findByIdAndRemove(id);
   return result;
 };
 
-export const usersService = {
-  createUser,
-  getUser,
-  geSingleUser,
-  updateUser,
-  deleteUser,
+export const CowService = {
+  createCow,
+  getCow,
+  updateCow,
+  geSingleCow,
+  deleteCow,
 };
