@@ -12,7 +12,7 @@ export type IUser = {
   name: UserName;
   address: string;
   budget: number;
-  income?: number;
+  income: number;
 };
 
 export type UserModel = Model<IUser>;

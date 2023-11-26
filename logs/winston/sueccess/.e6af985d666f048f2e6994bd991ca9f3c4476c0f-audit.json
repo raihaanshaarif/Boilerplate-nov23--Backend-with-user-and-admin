@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/raihan/Desktop/@phero/restart/digitalcowhut/logs/winston/sueccess/.e6af985d666f048f2e6994bd991ca9f3c4476c0f-audit.json",
+    "files": [
+        {
+            "date": 1701021047790,
+            "name": "/Users/raihan/Desktop/@phero/restart/digitalcowhut/logs/winston/sueccess/2023-26-11-23-success.log",
+            "hash": "60c405acc97b7aa9cd1b592c3e471dcf6352d5ad955b3a6e083edcadaea9f425"
+        },
+        {
+            "date": 1701021726216,
+            "name": "/Users/raihan/Desktop/@phero/restart/digitalcowhut/logs/winston/sueccess/2023-27-11-00-success.log",
+            "hash": "f3675212fe4a0c09190cc8246c28ba60c81bdc11f22184c1df550ef501bd43b7"
+        },
+        {
+            "date": 1701029528560,
+            "name": "/Users/raihan/Desktop/@phero/restart/digitalcowhut/logs/winston/sueccess/2023-27-11-02-success.log",
+            "hash": "b0327b3828fcfb96266c93d450df47a4a9bf3bc8eeced2e7a55e58bd35cd1f53"
+        }
+    ],
+    "hashType": "sha256"
+}

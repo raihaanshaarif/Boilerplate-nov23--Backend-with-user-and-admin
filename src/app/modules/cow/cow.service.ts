@@ -8,7 +8,7 @@ import { Cow } from './cow.model';
 
 // Create a new cow
 const createCow = async (payload: ICow): Promise<ICow | null> => {
-  console.log(payload.label);
+  // console.log(payload.label);
   const result = await Cow.create(payload);
   return result;
 };
